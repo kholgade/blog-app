@@ -1,0 +1,20 @@
+services:
+  blog-app:
+    build: .
+    image: blog-app
+    container_name: blog-app
+    restart: unless-stopped
+    ports:
+      - "32323:3000"
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    tmpfs:
+      - /app/repos:uid=1001,gid=1001
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - GIT_REPO_URL=
