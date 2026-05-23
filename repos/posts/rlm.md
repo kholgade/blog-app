@@ -40,3 +40,5 @@ For enterprises, RLMs offer a pragmatic upgrade path. You can turn any existing 
 For researchers, RLMs provide a clean sandbox to study reasoning mechanics. Because the architecture is modular — generator, verifier, refiner are largely independent — you can swap components, measure each submodule’s contribution, and identify failure modes systematically.
 
 In summary, RLMs stand out in the reasoning model landscape not by being the fastest or the most capable, but by being the most practical. They democratize advanced reasoning: you don’t need a supercluster, a research team, or months of RL experimentation to start using recursive thought. Just a capable LLM and the patience to let it think step by step.
+
+**Update (2026-05-23):** RLM-X variant adds meta-controller for dynamic iteration limits based on problem difficulty — now up to 92% on MATH-500.
