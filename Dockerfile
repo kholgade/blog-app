@@ -46,7 +46,7 @@ COPY --from=builder --chown=appuser:appgroup /app/package.json ./
 COPY --from=builder --chown=appuser:appgroup /app/site ./site
 COPY --chown=appuser:appgroup entrypoint.sh /entrypoint.sh
 
-# Copy repo markdown files for runtime regeneration
+# Copy repo markdown files for runtime regeneration (posts and daily-news)
 COPY --from=builder --chown=appuser:appgroup /app/repos ./repos
 
 # Make entrypoint executable

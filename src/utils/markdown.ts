@@ -3,7 +3,8 @@ import path from 'path';
 import { marked } from 'marked';
 import type { PostMetadata, Post } from '../types.js';
 
-const REPOS_DIR = path.join(process.cwd(), 'repos/posts');
+const BLOG_DIR = path.join(process.cwd(), 'repos/posts');
+const DAILY_NEWS_DIR = path.join(process.cwd(), 'repos/daily-news');
 
 function parseFrontmatter(content: string): Post {
   const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)/;
@@ -51,19 +52,18 @@ function parseFrontmatter(content: string): Post {
   };
 }
 
-export async function readPostsAsync(): Promise<Post[]> {
+async function readFilesFromDir(dir: string): Promise<Post[]> {
   const posts: Post[] = [];
 
-  if (!fs.existsSync(REPOS_DIR)) {
-    console.log('Posts directory not found:', REPOS_DIR);
+  if (!fs.existsSync(dir)) {
     return posts;
   }
 
-  const files = fs.readdirSync(REPOS_DIR).filter(f => f.endsWith('.md'));
+  const files = fs.readdirSync(dir).filter(f => f.endsWith('.md'));
 
   for (const file of files) {
     try {
-      const filePath = path.join(REPOS_DIR, file);
+      const filePath = path.join(dir, file);
       const content = await fs.promises.readFile(filePath, 'utf-8');
       const post = parseFrontmatter(content);
       posts.push(post);
@@ -73,6 +73,22 @@ export async function readPostsAsync(): Promise<Post[]> {
   }
 
   return posts;
+}
+
+export async function readPostsAsync(): Promise<Post[]> {
+  if (!fs.existsSync(BLOG_DIR)) {
+    console.log('Blog posts directory not found:', BLOG_DIR);
+    return [];
+  }
+  return readFilesFromDir(BLOG_DIR);
+}
+
+export async function readDailyBriefsAsync(): Promise<Post[]> {
+  if (!fs.existsSync(DAILY_NEWS_DIR)) {
+    console.log('Daily briefs directory not found:', DAILY_NEWS_DIR);
+    return [];
+  }
+  return readFilesFromDir(DAILY_NEWS_DIR);
 }
 
 export function parseMarkdownToHtml(content: string): string {

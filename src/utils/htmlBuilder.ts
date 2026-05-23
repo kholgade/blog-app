@@ -29,6 +29,7 @@ function buildHeader(): string {
         </div>
         <div class="nav-list">
           <a href="/">Home</a>
+          <a href="/daily-brief">Daily Brief</a>
         </div>
         <div class="header-right">
           <button id="theme-toggle" class="clay-btn">🌙</button>
@@ -104,11 +105,11 @@ export function buildPostPage(post: Post, htmlContent: string, slug: string): st
 </html>`;
 }
 
-export function buildCardHtml(post: Post, slug: string): string {
+export function buildCardHtml(post: Post, slug: string, urlPrefix: string = '/posts'): string {
   const date = formatDate(post.metadata.date, 'short');
   const excerpt = post.metadata.description || post.content.substring(0, 150) + '...';
   return `
-    <a href="/posts/${slug}" class="clay-card">
+    <a href="${urlPrefix}/${slug}" class="clay-card">
       <div class="card-content">
         <h3>${post.metadata.title}</h3>
         <p class="card-date">${date}</p>
@@ -135,6 +136,34 @@ export function buildHomePage(postsHtml: string): string {
     <main class="clay-container">
       <div class="posts-grid">
         ${postsHtml}
+      </div>
+    </main>
+    ${footer}
+  </div>
+  <script src="/js/theme-toggle.js"></script>
+</body>
+</html>`;
+}
+
+export function buildDailyBriefPage(briefsHtml: string): string {
+  const header = buildHeader();
+  const footer = buildFooter();
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Brief - ${config.blogTitle}</title>
+  <link rel="stylesheet" href="/css/theme.css">
+</head>
+<body>
+  <div class="app-container">
+    ${header}
+    <main class="clay-container">
+      <h2 style="text-align: center; margin-bottom: 2rem;">Daily Brief</h2>
+      <div class="posts-grid">
+        ${briefsHtml}
       </div>
     </main>
     ${footer}

@@ -10,6 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const PROJECT_ROOT = join(__dirname, '..');
 const POSTS_DIR = path.resolve(PROJECT_ROOT, 'site/posts');
+const BRIEFS_DIR = path.resolve(PROJECT_ROOT, 'site/daily-briefs');
 
 app.use(express.static(path.join(PROJECT_ROOT, 'site')));
 
@@ -53,6 +54,26 @@ app.get('/posts/:slug', validateSlug, (req: Request, res: Response, next: NextFu
     if (err) {
       console.error('Error serving post:', err.message);
       res.status(404).send('Post not found');
+    }
+  });
+});
+
+app.get('/daily-brief', (req: Request, res: Response, next: NextFunction) => {
+  res.sendFile(path.join(PROJECT_ROOT, 'site/daily-brief.html'), (err) => {
+    if (err) {
+      console.error('Error serving daily brief page:', err.message);
+      res.status(500).send('Error loading daily brief page');
+    }
+  });
+});
+
+app.get('/daily-briefs/:slug', validateSlug, (req: Request, res: Response, next: NextFunction) => {
+  const filePath = path.join(BRIEFS_DIR, `${req.params.slug}.html`);
+
+  res.sendFile(filePath, (err) => {
+    if (err) {
+      console.error('Error serving daily brief:', err.message);
+      res.status(404).send('Daily brief not found');
     }
   });
 });

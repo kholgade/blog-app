@@ -6,6 +6,11 @@ export const config = {
 
 export const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+export const CONTENT_TYPES = {
+  BLOG: 'blog',
+  DAILY_BRIEF: 'daily-brief',
+} as const;
+
 export function generateSlug(title: string | undefined, explicitSlug: string | undefined): string {
   if (explicitSlug) return explicitSlug;
   if (!title) return 'untitled-post';
