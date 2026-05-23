@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { marked } from 'marked';
 import type { Post, PostMetadata } from './types.js';
 
@@ -218,4 +219,7 @@ export function generateSite(): void {
 }
 
 // Run if executed directly
-generateSite();
+const __filename = fileURLToPath(import.meta.url);
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  generateSite();
+}

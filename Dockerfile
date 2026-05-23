@@ -46,8 +46,8 @@ COPY --from=builder --chown=appuser:appgroup /app/package.json ./
 COPY --from=builder --chown=appuser:appgroup /app/site ./site
 COPY --chown=appuser:appgroup entrypoint.sh /entrypoint.sh
 
-# Create directories for repo
-RUN mkdir -p /app/repos/posts
+# Copy repo markdown files for runtime regeneration
+COPY --from=builder --chown=appuser:appgroup /app/repos ./repos
 
 # Make entrypoint executable
 RUN chmod +x /entrypoint.sh

@@ -1,10 +1,16 @@
+// Generate site on startup if no posts exist
+import fs from 'fs';
+import path from 'path';
 import { generateSite } from './generate.js';
 
-// Generate site on startup
+const postsDir = path.join(process.cwd(), 'site/posts');
+
 console.log('Starting blog application...');
 
-// Run initial site generation
-generateSite();
+if (!fs.existsSync(postsDir) || fs.readdirSync(postsDir).filter(f => f.endsWith('.html')).length === 0) {
+  console.log('No posts found, generating site...');
+  generateSite();
+}
 
 // Start server
 import './server.js';
