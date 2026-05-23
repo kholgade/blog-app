@@ -36,8 +36,6 @@ function generatePostHtml(post: Post, slug: string): string {
         </div>
         <div class="nav-list">
           <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
         </div>
         <div class="header-right">
           <button id="theme-toggle" class="clay-btn">🌙</button>
@@ -110,8 +108,6 @@ function generateHomepage(posts: Post[]): string {
         </div>
         <div class="nav-list">
           <a href="/">Home</a>
-          <a href="/about">About</a>
-          <a href="/contact">Contact</a>
         </div>
         <div class="header-right">
           <button id="theme-toggle" class="clay-btn">🌙</button>
