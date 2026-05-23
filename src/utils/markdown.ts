@@ -3,38 +3,18 @@ import path from 'path';
 import { marked } from 'marked';
 import type { PostMetadata, Post } from '../types.js';
 
-// Use current working directory for repos path
 const REPOS_DIR = path.join(process.cwd(), 'repos/posts');
-
-export function readPosts(): Post[] {
-  const posts: Post[] = [];
-
-  if (!fs.existsSync(REPOS_DIR)) {
-    console.log('Posts directory not found:', REPOS_DIR);
-    return posts;
-  }
-
-  const files = fs.readdirSync(REPOS_DIR).filter(f => f.endsWith('.md'));
-
-  for (const file of files) {
-    const content = fs.readFileSync(path.join(REPOS_DIR, file), 'utf-8');
-    const post = parseFrontmatter(content);
-    posts.push(post);
-  }
-
-  return posts;
-}
 
 function parseFrontmatter(content: string): Post {
   const frontmatterRegex = /^---\n([\s\S]*?)\n---\n([\s\S]*)/;
   const match = content.match(frontmatterRegex);
 
   if (!match) {
-    return { metadata: { title: '', date: new Date().toISOString() }, content };
+    throw new Error('No frontmatter found in content');
   }
 
   const frontmatterLines = match[1].split('\n');
-  const metadata: PostMetadata = { title: '', date: new Date().toISOString() };
+  const metadata: Partial<PostMetadata> = {};
 
   for (const line of frontmatterLines) {
     const [key, ...valueParts] = line.split(':');
@@ -58,13 +38,52 @@ function parseFrontmatter(content: string): Post {
     }
   }
 
+  if (!metadata.title) {
+    throw new Error('Post requires title in frontmatter');
+  }
+  if (!metadata.date) {
+    throw new Error('Post requires date in frontmatter');
+  }
+
   return {
-    metadata,
+    metadata: metadata as PostMetadata,
     content: match[2]
   };
 }
 
-export function convertToHtml(content: string): string {
-  // marked returns Promise in newer versions, but sync mode is available
-  return marked(content, { async: false }) as string;
+export async function readPostsAsync(): Promise<Post[]> {
+  const posts: Post[] = [];
+
+  if (!fs.existsSync(REPOS_DIR)) {
+    console.log('Posts directory not found:', REPOS_DIR);
+    return posts;
+  }
+
+  const files = fs.readdirSync(REPOS_DIR).filter(f => f.endsWith('.md'));
+
+  for (const file of files) {
+    try {
+      const filePath = path.join(REPOS_DIR, file);
+      const content = await fs.promises.readFile(filePath, 'utf-8');
+      const post = parseFrontmatter(content);
+      posts.push(post);
+    } catch (err) {
+      console.error(`Failed to parse ${file}:`, err instanceof Error ? err.message : err);
+    }
+  }
+
+  return posts;
+}
+
+export function parseMarkdownToHtml(content: string): string {
+  try {
+    const result = marked(content, { async: false });
+    if (typeof result !== 'string') {
+      throw new Error('Markdown conversion failed');
+    }
+    return result;
+  } catch (err) {
+    console.error('Markdown parsing error:', err);
+    throw new Error('Failed to parse markdown content');
+  }
 }
