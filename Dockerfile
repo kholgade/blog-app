@@ -12,11 +12,14 @@ RUN npm ci
 # Copy source code
 COPY tsconfig.json ./
 COPY src/ ./src/
-COPY site/css ./site/css
-COPY site/js ./site/js
+COPY repos/ ./repos/
+COPY site/ ./site/
 
 # Build TypeScript
 RUN npm run build
+
+# Generate site HTML from markdown posts
+RUN npm run generate
 
 # Prune devDependencies — only production deps go to runtime
 RUN npm prune --production
