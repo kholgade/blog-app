@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install all dependencies (including devDeps) for build
+RUN npm ci
 
 # Copy source code
 COPY tsconfig.json ./
@@ -18,10 +18,16 @@ COPY site/js ./site/js
 # Build TypeScript
 RUN npm run build
 
+# Prune devDependencies — only production deps go to runtime
+RUN npm prune --production
+
 # Production stage
 FROM node:22-alpine AS runner
 
 WORKDIR /app
+
+# Update packages to patch CVEs in base image
+RUN apk upgrade --no-cache
 
 # Install git for repo sync
 RUN apk add --no-cache git
@@ -30,16 +36,15 @@ RUN apk add --no-cache git
 RUN addgroup -g 1001 -S appgroup && \
     adduser -u 1001 -S appuser -G appgroup
 
-# Copy built artifacts
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./
-COPY --from=builder /app/site ./site
-COPY --from=builder /app/entrypoint.sh /entrypoint.sh
+# Copy built artifacts with correct ownership
+COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
+COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
+COPY --from=builder --chown=appuser:appgroup /app/package.json ./
+COPY --from=builder --chown=appuser:appgroup /app/site ./site
+COPY --chown=appuser:appgroup /app/entrypoint.sh /entrypoint.sh
 
 # Create directories for repo
-RUN mkdir -p /app/repos/posts && \
-    chown -R appuser:appgroup /app
+RUN mkdir -p /app/repos/posts
 
 # Make entrypoint executable
 RUN chmod +x /entrypoint.sh
@@ -53,7 +58,8 @@ EXPOSE 3000
 # Environment variables
 ENV PORT=3000 \
     NODE_ENV=production \
-    GIT_REPO_URL=
+    GIT_REPO_URL= \
+    NODE_OPTIONS="--max-old-space-size=512"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
@@ -61,3 +67,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 
 # Use entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
+
+# Run-time hardening (use with docker run / docker-compose):
+# --cap-drop=ALL --cap-add=NET_BIND_SERVICE
+# --read-only --tmpfs /app/repos:uid=1001,gid=1001
+# --security-opt=no-new-privileges:true
