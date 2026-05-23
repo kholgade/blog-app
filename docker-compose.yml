@@ -5,7 +5,7 @@ services:
     container_name: blog-app
     restart: unless-stopped
     ports:
-      - "32323:3000"
+      - "32323:32323"
     cap_drop:
       - ALL
     cap_add:
@@ -15,6 +15,6 @@ services:
     security_opt:
       - no-new-privileges:true
     environment:
-      - PORT=3000
+      - PORT=32323
       - NODE_ENV=production
       - GIT_REPO_URL=

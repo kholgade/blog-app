@@ -19,7 +19,7 @@ COPY site/ ./site/
 RUN npm run build
 
 # Generate site HTML from markdown posts
-RUN npm run generate
+RUN node dist/generate.js
 
 # Prune devDependencies — only production deps go to runtime
 RUN npm prune --production
@@ -56,17 +56,17 @@ RUN chmod +x /entrypoint.sh
 USER appuser
 
 # Expose port
-EXPOSE 3000
+EXPOSE 32323
 
 # Environment variables
-ENV PORT=3000 \
+ENV PORT=32323 \
     NODE_ENV=production \
     GIT_REPO_URL= \
     NODE_OPTIONS="--max-old-space-size=512"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:32323/ || exit 1
 
 # Use entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
