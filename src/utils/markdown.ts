@@ -103,3 +103,17 @@ export function parseMarkdownToHtml(content: string): string {
     throw new Error('Failed to parse markdown content');
   }
 }
+
+export function shouldRegenerate(mdFilePath: string, htmlFilePath: string): boolean {
+  if (!fs.existsSync(htmlFilePath)) {
+    return true;
+  }
+
+  try {
+    const mdStats = fs.statSync(mdFilePath);
+    const htmlStats = fs.statSync(htmlFilePath);
+    return mdStats.mtime > htmlStats.mtime;
+  } catch {
+    return true;
+  }
+}
