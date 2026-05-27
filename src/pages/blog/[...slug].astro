@@ -1,0 +1,38 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+---
+
+<Base title={`${post.data.title} — be-astute.in`} description={post.data.description}>
+  <article class="max-w-none">
+    <header class="mb-8">
+      <h1 class="text-3xl font-serif font-bold sm:text-4xl text-[var(--color-main-text)]">{post.data.title}</h1>
+      <div class="mt-3 text-sm text-[var(--color-muted)] font-serif">
+        <time datetime={post.data.date.toISOString()}>
+          {new Date(post.data.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+        </time>
+        {post.data.tags && post.data.tags.length > 0 && (
+          <span class="ml-4">
+            {post.data.tags.map((tag) => (
+              <span class="mr-2">#{tag}</span>
+            ))}
+          </span>
+        )}
+      </div>
+    </header>
+    <div class="prose font-serif text-[var(--color-main-text)]">
+      <Content />
+    </div>
+  </article>
+</Base>

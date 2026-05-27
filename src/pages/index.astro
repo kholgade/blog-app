@@ -1,0 +1,57 @@
+---
+import Base from "../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const posts = await getCollection("blog");
+const sortedPosts = posts.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+const recentPosts = sortedPosts.slice(0, 5);
+---
+
+<Base title="be-astute.in" description="Thoughts, insights, and ideas">
+  <div class="mb-12 sm:mb-16">
+    <p class="mt-6 text-lg font-serif">
+      Welcome to be-astute.in — thoughts on technology, entrepreneurship, and building things that matter.
+    </p>
+  </div>
+
+  <div class="mb-16 sm:mb-24">
+    <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Latest</h2>
+
+    {
+      recentPosts.length > 0 ? (
+        recentPosts.map((post) => (
+          <a href={`/blog/${post.slug}/`} class="flex justify-between items-start gap-8 group mb-10 sm:mb-12 no-underline">
+            <div class="grow">
+              <h3 class="text-xl leading-tight font-serif font-medium group-hover:underline group-hover:decoration-dashed group-hover:underline-offset-4 group-hover:decoration-1 sm:text-2xl text-[var(--color-main-text)]">
+                {post.data.title}
+              </h3>
+              <div class="mt-1 text-sm leading-normal text-[var(--color-muted)]">
+                <time datetime={post.data.date.toISOString()}>
+                  {new Date(post.data.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                </time>
+              </div>
+              {post.data.description && (
+                <div class="mt-3 text-sm leading-normal font-serif text-[var(--color-muted)]">
+                  {post.data.description}
+                </div>
+              )}
+            </div>
+            <div class="hidden font-serif italic opacity-0 transition group-hover:opacity-100 sm:inline-flex sm:gap-1 sm:items-center sm:shrink-0 text-[var(--color-main-text)]">
+              Read
+            </div>
+          </a>
+        ))
+      ) : (
+        <p class="font-serif text-[var(--color-muted)]">No posts yet. Check back soon.</p>
+      )
+    }
+
+    <div class="mt-12 sm:mt-16">
+      <a href="/blog/">
+        <button class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 px-4 py-2 bg-[var(--color-main-text)] text-[var(--color-main-bg)] hover:opacity-90 cursor-pointer">
+          View All Posts
+        </button>
+      </a>
+    </div>
+  </div>
+</Base>

@@ -1,0 +1,87 @@
+---
+import "../styles/global.css";
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="antialiased break-words">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description ?? "be-astute.in"} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="canonical" href={Astro.url} />
+  <link rel="alternate" type="application/rss+xml" title="be-astute.in" href="/rss.xml" />
+  <script is:inline>
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+</head>
+<body>
+  <div class="flex flex-col min-h-screen px-4 md:px-8">
+    <nav class="min-h-10 pt-4 relative sm:min-h-14 md:pt-8 my-6">
+      <div class="items-center max-w-3xl mx-auto">
+        <header class="max-w-3xl flex justify-items-start py-4 items-center gap-4">
+          <a href="/" class="font-sans font-black text-4xl sm:text-5xl leading-tight no-underline text-[var(--color-main-text)] hover:text-[var(--color-accent)]">
+            be-astute.in
+          </a>
+        </header>
+        <div class="max-w-3xl relative mt-2">
+          <ul class="flex gap-6">
+            <li class="py-1">
+              <a href="/" class="text-xl font-serif text-[var(--color-main-text)] hover:underline hover:underline-offset-2 hover:decoration-1 md:text-base">Home</a>
+            </li>
+            <li class="py-1">
+              <a href="/blog/" class="text-xl font-serif text-[var(--color-main-text)] hover:underline hover:underline-offset-2 hover:decoration-1 md:text-base">Blog</a>
+            </li>
+            <li class="py-1">
+              <a href="/about/" class="text-xl font-serif text-[var(--color-main-text)] hover:underline hover:underline-offset-2 hover:decoration-1 md:text-base">About</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="absolute right-0 top-4 z-10 md:top-8 flex items-center gap-2">
+        <button id="theme-toggle" class="text-sm px-2 py-1 rounded border border-[var(--color-border)] hover:opacity-70 cursor-pointer font-serif" aria-label="Toggle theme">
+          <span id="theme-icon">🌙</span>
+        </button>
+      </div>
+    </nav>
+    <main class="grow w-full max-w-3xl mx-auto">
+      <slot />
+    </main>
+    <footer class="w-full max-w-3xl mx-auto pt-12 pb-10 sm:pt-24 sm:pb-14">
+      <div class="mb-4 flex flex-wrap gap-x-6 gap-y-1">
+        <a href="/" class="font-serif hover:underline hover:underline-offset-2 text-[var(--color-main-text)]">Home</a>
+        <a href="/blog/" class="font-serif hover:underline hover:underline-offset-2 text-[var(--color-main-text)]">Blog</a>
+        <a href="/about/" class="font-serif hover:underline hover:underline-offset-2 text-[var(--color-main-text)]">About</a>
+      </div>
+      <div class="pt-6 flex flex-col gap-4 border-t border-dashed border-[var(--color-border)] sm:flex-row-reverse sm:justify-between sm:items-center">
+        <p class="text-sm text-[var(--color-muted)]">&copy; 2026 <a href="/" class="hover:underline hover:underline-offset-2">be-astute.in</a>. All rights reserved.</p>
+      </div>
+    </footer>
+  </div>
+  <script is:inline>
+    const toggle = document.getElementById('theme-toggle');
+    const icon = document.getElementById('theme-icon');
+    if (toggle) {
+      toggle.addEventListener('click', () => {
+        const html = document.documentElement;
+        html.classList.toggle('dark');
+        localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        if (icon) icon.textContent = html.classList.contains('dark') ? '☀️' : '🌙';
+      });
+    }
+    if (icon) {
+      icon.textContent = document.documentElement.classList.contains('dark') ? '☀️' : '🌙';
+    }
+  </script>
+</body>
+</html>
