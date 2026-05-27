@@ -1,0 +1,45 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const papers = await getCollection("papers");
+const sortedPapers = papers.sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime());
+---
+
+<Base title="Papers" description="White papers and research summaries">
+  <div class="mb-12 sm:mb-16">
+     <h1 class="text-3xl font-serif italic mb-4">White Papers</h1>
+     <p class="text-lg font-serif text-[var(--color-muted)]">Detailed research and high-level summaries of AI advancements.</p>
+  </div>
+
+  <div class="mb-16 sm:mb-24">
+    {
+      sortedPapers.length > 0 ? (
+        sortedPapers.map((paper) => (
+          <a href={`/papers/${paper.slug}/`} class="flex justify-between items-start gap-8 group mb-10 sm:mb-12 no-underline">
+            <div class="grow">
+              <h3 class="text-xl leading-tight font-serif font-medium group-hover:underline group-hover:decoration-dashed group-hover:underline-offset-4 group-hover:decoration-1 sm:text-2xl text-[var(--color-main-text)]">
+                {paper.data.title}
+              </h3>
+              <div class="mt-1 text-sm leading-normal text-[var(--color-muted)]">
+                <time datetime={paper.data.date.toISOString()}>
+                  {new Date(paper.data.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                </time>
+              </div>
+              {paper.data.description && (
+                <div class="mt-3 text-sm leading-normal font-serif text-[var(--color-muted)]">
+                  {paper.data.description}
+                </div>
+              )}
+            </div>
+            <div class="hidden font-serif italic opacity-0 transition group-hover:opacity-100 sm:inline-flex sm:gap-1 sm:items-center sm:shrink-0 text-[var(--color-main-text)]">
+              Read
+            </div>
+          </a>
+        ))
+      ) : (
+        <p class="font-serif text-[var(--color-muted)]">No papers yet. Check back soon.</p>
+      )
+    }
+  </div>
+</Base>

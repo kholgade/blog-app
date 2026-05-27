@@ -1,0 +1,37 @@
+---
+import Base from "../../layouts/Base.astro";
+import { getCollection, getEntry } from "astro:content";
+
+export async function getStaticPaths() {
+  const papers = await getCollection("papers");
+  return papers.map((paper) => ({
+    params: { slug: paper.slug },
+    props: { paper },
+  }));
+}
+
+const { paper } = Astro.props;
+---
+
+<Base title={paper.data.title} description={paper.data.description}>
+  <article class="max-w-3xl mx-auto py-12">
+    <header class="mb-12">
+      <h1 class="text-4xl font-serif font-medium mb-4 text-[var(--color-main-text)]">
+        {paper.data.title}
+      </h1>
+      <div class="flex items-center gap-4 text-sm text-[var(--color-muted)]">
+        <time>{new Date(paper.data.date).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}</time>
+        <span class="opacity-50">•</span>
+        <a href={paper.data.pdf_url} target="_blank" class="underline hover:text-[var(--color-main-text)] transition-colors">
+          Original White Paper (PDF)
+        </a>
+      </div>
+    </header>
+    
+    <div class="prose prose-serif max-w-none text-[var(--color-main-text)]">
+      <div class="markdown-content">
+        {paper.body}
+      </div>
+    </div>
+  </article>
+</Base>
