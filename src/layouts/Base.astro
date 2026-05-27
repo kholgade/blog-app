@@ -25,7 +25,7 @@ const { title, description } = Astro.props;
     }
   </script>
 </head>
-<body>
+<body class="bg-[var(--color-main-bg)] text-[var(--color-main-text)]">
   <div class="flex flex-col min-h-screen px-4 md:px-8">
     <nav class="min-h-10 pt-4 relative sm:min-h-14 md:pt-8 my-6">
       <div class="items-center max-w-3xl mx-auto">
@@ -41,6 +41,9 @@ const { title, description } = Astro.props;
             </li>
             <li class="py-1">
               <a href="/blog/" class="text-xl font-serif text-[var(--color-main-text)] hover:underline hover:underline-offset-2 hover:decoration-1 md:text-base">Blog</a>
+            </li>
+            <li class="py-1">
+              <a href="/papers/" class="text-xl font-serif text-[var(--color-main-text)] hover:underline hover:underline-offset-2 hover:decoration-1 md:text-base">Papers</a>
             </li>
             <li class="py-1">
               <a href="/about/" class="text-xl font-serif text-[var(--color-main-text)] hover:underline hover:underline-offset-2 hover:decoration-1 md:text-base">About</a>
@@ -61,6 +64,7 @@ const { title, description } = Astro.props;
       <div class="mb-4 flex flex-wrap gap-x-6 gap-y-1">
         <a href="/" class="font-serif hover:underline hover:underline-offset-2 text-[var(--color-main-text)]">Home</a>
         <a href="/blog/" class="font-serif hover:underline hover:underline-offset-2 text-[var(--color-main-text)]">Blog</a>
+        <a href="/papers/" class="font-serif hover:underline hover:underline-offset-2 text-[var(--color-main-text)]">Papers</a>
         <a href="/about/" class="font-serif hover:underline hover:underline-offset-2 text-[var(--color-main-text)]">About</a>
       </div>
       <div class="pt-6 flex flex-col gap-4 border-t border-dashed border-[var(--color-border)] sm:flex-row-reverse sm:justify-between sm:items-center">
